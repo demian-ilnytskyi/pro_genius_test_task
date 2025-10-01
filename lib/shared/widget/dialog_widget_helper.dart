@@ -18,6 +18,7 @@ class _DialogsWidget {
       context: context,
       enableDrag: false,
       isScrollControlled: true,
+      isDismissible: false,
       builder: (context) => SafeArea(
         bottom: false,
         child: ModalWindowBlocProvider(child: ModalWindowWidget(url: url)),
