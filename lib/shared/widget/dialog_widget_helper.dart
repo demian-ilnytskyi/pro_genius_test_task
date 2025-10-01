@@ -13,14 +13,15 @@ class _DialogsWidget {
   _DialogsWidget.of(this.context);
   final BuildContext context;
 
-  void showModalWndow({required Widget child}) {
+  void showModalWndow(String url) {
     showModalBottomSheet<void>(
       context: context,
       enableDrag: false,
       isScrollControlled: true,
-      builder: (context) {
-        return ModalWindowBlocProvider(child: ModalWindowWidget(child: child));
-      },
+      builder: (context) => SafeArea(
+        bottom: false,
+        child: ModalWindowBlocProvider(child: ModalWindowWidget(url: url)),
+      ),
     );
   }
 }

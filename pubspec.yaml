@@ -21,6 +21,7 @@ dependencies:
   injectable: ^2.5.1
   intl: ^0.20.2
   json_annotation: ^4.9.0      # Needed at runtime with json_serializable
+  webview_flutter: ^4.13.0
 
 dev_dependencies:
   build_runner: ^2.7.1          # Used for code generation
