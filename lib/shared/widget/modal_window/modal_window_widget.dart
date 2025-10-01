@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:pro_genius_test_task/l10n/l10n.dart';
 import 'package:pro_genius_test_task/shared/shared.dart';
 
 class ModalWindowWidget extends StatelessWidget {
@@ -51,19 +53,60 @@ class ModalWindowWidget extends StatelessWidget {
                 onVerticalDragUpdate: (details) => context
                     .read<ModalWindowBloc>()
                     .add(ModalWindowEvent.changeSize(details.delta.dy)),
-                onVerticalDragStart: (_) {
-                  FocusScope.of(context).unfocus(); // hide keyboard
-                },
+                onVerticalDragStart: (_) =>
+                    FocusScope.of(context).unfocus(), // hide keyboard
                 onVerticalDragEnd: (_) => context.read<ModalWindowBloc>().add(
                   const ModalWindowEvent.setHeighState(),
                 ),
-                child: Container(
-                  height: state.dragBarHeight,
+                child: ColoredBox(
                   color: Colors.red,
-                  alignment: Alignment.center,
-                  child: const Text(
-                    'Drag Here',
-                    style: TextStyle(color: Colors.white),
+                  child: SizedBox(
+                    height: state.dragBarHeight,
+                    child: Row(
+                      children: [
+                        const Expanded(child: SizedBox.shrink()),
+                        Text(
+                          context.l10n.dragHere,
+                          style: const TextStyle(color: Colors.white),
+                          textAlign: TextAlign.center,
+                        ),
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 16),
+                              child: IconButton(
+                                onPressed: () {
+                                  final bloc = context.read<ModalWindowBloc>();
+                                  if (bloc.state.showCloseIcon) {
+                                    if (context.canPop()) {
+                                      context.pop();
+                                    }
+                                  } else {
+                                    bloc.add(const ModalWindowEvent.hide());
+                                  }
+                                },
+                                icon:
+                                    BlocSelector<
+                                      ModalWindowBloc,
+                                      ModalWindowState,
+                                      bool
+                                    >(
+                                      selector: (state) => state.showCloseIcon,
+                                      builder: (context, showCloseIcon) => Icon(
+                                        showCloseIcon
+                                            ? Icons.close
+                                            : Icons
+                                                  .keyboard_arrow_down_outlined,
+                                        size: 24,
+                                      ),
+                                    ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

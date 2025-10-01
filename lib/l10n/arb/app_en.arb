@@ -11,5 +11,9 @@
   "openModalWindow": "Open Modal Window",
   "@openModalWindow": {
     "description": "Text for button on the Home page. Button opens Modal Window"
+  },
+  "dragHere": "Drag Here",
+  "@dragHere": {
+    "description": "Text for Drga Section on the Model Window"
   }
 }

@@ -8,4 +8,5 @@ sealed class ModalWindowEvent with _$ModalWindowEvent {
     required double topPadding,
   }) = _SetScreenScreenHeight;
   const factory ModalWindowEvent.setHeighState() = _SetHeighState;
+  const factory ModalWindowEvent.hide() = _Hide;
 }
