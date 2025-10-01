@@ -2,10 +2,14 @@
   "@@locale": "en",
   "errorTitle": "Error",
   "@errorTitle": {
-    "examples": "Title for the Error page"
+    "description": "Title for the Error page"
   },
   "errorMessage": "An error occurred while loading the page",
   "@errorMessage": {
-    "examples": "Error page message"
+    "description": "Error page message"
+  },
+  "openModalWindow": "Open Modal Window",
+  "@openModalWindow": {
+    "description": "Text for button on the Home page. Button opens Modal Window"
   }
 }
