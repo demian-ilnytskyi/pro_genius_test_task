@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show SystemChannels;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pro_genius_test_task/l10n/l10n.dart';
@@ -54,7 +55,8 @@ class ModalWindowWidget extends StatelessWidget {
                     .read<ModalWindowBloc>()
                     .add(ModalWindowEvent.changeSize(details.delta.dy)),
                 onVerticalDragStart: (_) =>
-                    FocusScope.of(context).unfocus(), // hide keyboard
+                    // hide keyboard for WebView
+                    SystemChannels.textInput.invokeMethod('TextInput.hide'),
                 onVerticalDragEnd: (_) => context.read<ModalWindowBloc>().add(
                   const ModalWindowEvent.setHeighState(),
                 ),
@@ -77,6 +79,10 @@ class ModalWindowWidget extends StatelessWidget {
                               padding: const EdgeInsets.only(right: 16),
                               child: IconButton(
                                 onPressed: () {
+                                  // hide keyboard for WebView
+                                  SystemChannels.textInput.invokeMethod(
+                                    'TextInput.hide',
+                                  );
                                   final bloc = context.read<ModalWindowBloc>();
                                   if (bloc.state.showCloseIcon) {
                                     if (context.canPop()) {
@@ -110,13 +116,17 @@ class ModalWindowWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              BlocSelector<ModalWindowBloc, ModalWindowState, double>(
-                selector: (state) => state.height,
-                builder: (context, height) => AnimatedContainer(
-                  duration: const Duration(milliseconds: 100),
-                  curve: Curves.easeOut,
-                  height: height,
-                  child: webView,
+              BlocBuilder<ModalWindowBloc, ModalWindowState>(
+                buildWhen: (previous, current) =>
+                    previous.height != current.height ||
+                    previous.maxWebViewHeight != current.maxWebViewHeight,
+                builder: (context, state) => Flexible(
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 100),
+                    curve: Curves.easeOut,
+                    height: state.height,
+                    child: webView,
+                  ),
                 ),
               ),
             ],
