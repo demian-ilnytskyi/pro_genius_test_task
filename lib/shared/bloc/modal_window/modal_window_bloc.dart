@@ -67,9 +67,13 @@ class ModalWindowBloc extends Bloc<ModalWindowEvent, ModalWindowState> {
     final screenHeight = state.screenHeight;
     if (screenHeight != null && screenHeight > 0) {
       final newHeight = state.height - event.height;
-      if (newHeight > state.minWindowHeight &&
-          newHeight < state.maxWindowHeight) {
-        emit(state.copyWith(height: newHeight));
+      // WebView has bug with 0 when change size from min to other because set
+      // 0.1
+      if (newHeight > 0.1 &&
+          newHeight < (state.maxWindowHeight - state.minWindowHeight)) {
+        if ((newHeight - state.height).abs() > 1) {
+          emit(state.copyWith(height: newHeight));
+        }
       }
     }
   }
@@ -79,8 +83,10 @@ class ModalWindowBloc extends Bloc<ModalWindowEvent, ModalWindowState> {
     if (screenHeight != null && screenHeight > 0) {
       final screenCentralPoint = screenHeight * _getCenterPercent;
 
-      final min = state.minWindowHeight;
-      final max = state.maxWindowHeight;
+      // WebView has bug with 0 when change size from min to other because set
+      // 0.1
+      const min = 0.10;
+      final max = state.maxWindowHeight - state.minWindowHeight;
       final center = screenCentralPoint;
 
       final current = state.height;
