@@ -1,0 +1,26 @@
+name: pro_genius_test_task
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  go_router: ^16.2.4
+  intl: ^0.20.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  intl_utils: ^2.8.11
+  very_good_analysis: ^9.0.0
+
+flutter:
+  uses-material-design: true
+  generate: true
