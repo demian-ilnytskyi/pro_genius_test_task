@@ -15,20 +15,23 @@ class ModalWindowBloc extends Bloc<ModalWindowEvent, ModalWindowState> {
     : _widgetsBinding = WidgetsBinding.instance,
       super(
         const _ModalWindowState(
-          height: 100,
+          height: minHeight,
           dragBarHeight: 0,
           maxWebViewHeight: 0,
+          showCloseIcon: false,
         ),
       ) {
     on<_ChangeSize>(_onChangeSize);
     on<_SetScreenScreenHeight>(_onSetScreenScreenHeight);
     on<_SetHeighState>(_onSetHeighState);
+    on<_Hide>(_onHide);
     _init();
   }
   final WidgetsBinding _widgetsBinding;
 
   static const _dragBarHeighScreenPercent = 0.1;
   static const _webViewHeighScreenPercent = 1;
+  static const minHeight = 0.10;
   final _webViewCenterHeightScreenPercent =
       (_webViewHeighScreenPercent - _dragBarHeighScreenPercent) / 2;
 
@@ -79,6 +82,7 @@ class ModalWindowBloc extends Bloc<ModalWindowEvent, ModalWindowState> {
         dragBarHeight: dragBarHeight,
         maxWebViewHeight:
             (screenHeight * _webViewHeighScreenPercent) - dragBarHeight,
+        showCloseIcon: false,
       ),
     );
   }
@@ -105,14 +109,13 @@ class ModalWindowBloc extends Bloc<ModalWindowEvent, ModalWindowState> {
 
       // WebView has bug with 0 when change size from min to other because set
       // 0.1
-      const min = 0.10;
       final max = state.maxWebViewHeight;
       final center = screenCentralPoint;
 
       final current = state.height;
 
       final distances = {
-        min: (current - min).abs(),
+        minHeight: (current - minHeight).abs(),
         center: (current - center).abs(),
         max: (current - max).abs(),
       };
@@ -121,7 +124,16 @@ class ModalWindowBloc extends Bloc<ModalWindowEvent, ModalWindowState> {
           .reduce((a, b) => a.value < b.value ? a : b)
           .key;
 
-      emit(state.copyWith(height: targetHeight));
+      emit(
+        state.copyWith(
+          height: targetHeight,
+          showCloseIcon: targetHeight == minHeight,
+        ),
+      );
     }
+  }
+
+  void _onHide(_Hide event, Emitter<ModalWindowState> emit) {
+    emit(state.copyWith(height: minHeight, showCloseIcon: true));
   }
 }
