@@ -2,6 +2,7 @@ import 'dart:async' show FutureOr;
 
 import 'package:flutter/material.dart' show Colors, Widget, runApp;
 import 'package:flutter/services.dart';
+import 'package:pro_genius_test_task/shared/helper/get_it_service_locator.dart';
 import 'package:pro_genius_test_task/shared/shared.dart';
 
 Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
@@ -31,6 +32,8 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
       ),
     );
   }
+
+  configureDependencies();
 
   runApp(await builder());
 }
