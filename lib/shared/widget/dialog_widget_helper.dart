@@ -18,8 +18,10 @@ class _DialogsWidget {
       context: context,
       enableDrag: false,
       isScrollControlled: true,
-      builder: (context) =>
-          ModalWindowBlocProvider(child: ModalWindowWidget(url: url)),
+      builder: (context) => SafeArea(
+        bottom: false,
+        child: ModalWindowBlocProvider(child: ModalWindowWidget(url: url)),
+      ),
     );
   }
 }

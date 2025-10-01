@@ -14,11 +14,19 @@ class ModalWindowWidget extends StatelessWidget {
     return BlocConsumer<ModalWindowBloc, ModalWindowState>(
       listener: (context, state) {
         if (state.screenHeight == 0) {
-          context.read<ModalWindowBloc>().add(
-            ModalWindowEvent.setScreenScreenHeight(
-              MediaQuery.sizeOf(context).height,
-            ),
-          );
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            final height = MediaQuery.sizeOf(context).height;
+            // MediaQuery.paddingOf(context); not worked it always return 0
+            final paddingTop = MediaQueryData.fromView(
+              View.of(context),
+            ).padding.top;
+            context.read<ModalWindowBloc>().add(
+              ModalWindowEvent.setScreenScreenHeight(
+                screenHeight: height,
+                topPadding: paddingTop,
+              ),
+            );
+          });
         }
       },
       listenWhen: (previous, current) =>

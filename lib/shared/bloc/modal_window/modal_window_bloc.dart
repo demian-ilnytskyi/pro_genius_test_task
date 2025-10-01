@@ -28,7 +28,7 @@ class ModalWindowBloc extends Bloc<ModalWindowEvent, ModalWindowState> {
   final WidgetsBinding _widgetsBinding;
 
   static const _minHeighScreenPercent = 0.1;
-  static const _maxHeighScreenPercent = 0.9;
+  static const _maxHeighScreenPercent = 1;
   double get _getCenterPercent =>
       (_maxHeighScreenPercent - _minHeighScreenPercent) / 2;
 
@@ -38,14 +38,31 @@ class ModalWindowBloc extends Bloc<ModalWindowEvent, ModalWindowState> {
       final view = views.elementAtOrNull(0);
 
       if (view != null) {
-        final size = view.physicalSize / view.devicePixelRatio;
-        add(ModalWindowEvent.setScreenScreenHeight(size.height));
+        final height = view.physicalSize.height / view.devicePixelRatio;
+        final padding = view.padding;
+
+        add(
+          ModalWindowEvent.setScreenScreenHeight(
+            screenHeight: height,
+            topPadding: padding.top / view.devicePixelRatio,
+          ),
+        );
         return;
       }
-      add(const ModalWindowEvent.setScreenScreenHeight(0));
+      add(
+        const ModalWindowEvent.setScreenScreenHeight(
+          screenHeight: 0,
+          topPadding: 0,
+        ),
+      );
     } catch (e, stack) {
       log('Model Window Error ', error: e, stackTrace: stack);
-      add(const ModalWindowEvent.setScreenScreenHeight(0));
+      add(
+        const ModalWindowEvent.setScreenScreenHeight(
+          screenHeight: 0,
+          topPadding: 0,
+        ),
+      );
     }
   }
 
@@ -53,12 +70,13 @@ class ModalWindowBloc extends Bloc<ModalWindowEvent, ModalWindowState> {
     _SetScreenScreenHeight event,
     Emitter<ModalWindowState> emit,
   ) {
+    final screenHeight = event.screenHeight - event.topPadding;
     emit(
       _ModalWindowState(
-        screenHeight: event.screenHeight,
-        height: event.screenHeight * _getCenterPercent,
-        minWindowHeight: event.screenHeight * _minHeighScreenPercent,
-        maxWindowHeight: event.screenHeight * _maxHeighScreenPercent,
+        screenHeight: screenHeight,
+        height: screenHeight * _getCenterPercent,
+        minWindowHeight: screenHeight * _minHeighScreenPercent,
+        maxWindowHeight: screenHeight * _maxHeighScreenPercent,
       ),
     );
   }
