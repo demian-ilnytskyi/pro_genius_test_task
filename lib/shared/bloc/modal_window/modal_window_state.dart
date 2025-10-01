@@ -4,8 +4,8 @@ part of 'modal_window_bloc.dart';
 sealed class ModalWindowState with _$ModalWindowState {
   const factory ModalWindowState({
     required double height,
-    required double minWindowHeight,
-    required double maxWindowHeight,
+    required double dragBarHeight,
+    required double maxWebViewHeight,
     double? screenHeight,
   }) = _ModalWindowState;
 }

@@ -32,12 +32,12 @@ class ModalWindowWidget extends StatelessWidget {
       listenWhen: (previous, current) =>
           previous.screenHeight != current.screenHeight,
       buildWhen: (previous, current) =>
-          current.maxWindowHeight != previous.maxWindowHeight ||
-          current.minWindowHeight != previous.minWindowHeight,
+          current.maxWebViewHeight != previous.maxWebViewHeight ||
+          current.dragBarHeight != previous.dragBarHeight,
       builder: (context, state) => ConstrainedBox(
         constraints: BoxConstraints(
-          maxHeight: state.maxWindowHeight,
-          minHeight: state.minWindowHeight,
+          maxHeight: state.maxWebViewHeight + state.dragBarHeight,
+          minHeight: state.dragBarHeight,
         ),
         child: Padding(
           padding: EdgeInsets.only(
@@ -58,7 +58,7 @@ class ModalWindowWidget extends StatelessWidget {
                   const ModalWindowEvent.setHeighState(),
                 ),
                 child: Container(
-                  height: state.minWindowHeight,
+                  height: state.dragBarHeight,
                   color: Colors.red,
                   alignment: Alignment.center,
                   child: const Text(
