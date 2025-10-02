@@ -7,6 +7,8 @@ sealed class ModalWindowState with _$ModalWindowState {
     required double dragBarHeight,
     required double maxWebViewHeight,
     required bool showCloseIcon,
+    // in Miliseconds
+    required int animationTime,
     double? screenHeight,
   }) = _ModalWindowState;
 }
