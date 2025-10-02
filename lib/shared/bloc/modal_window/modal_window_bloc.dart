@@ -19,6 +19,7 @@ class ModalWindowBloc extends Bloc<ModalWindowEvent, ModalWindowState> {
           dragBarHeight: 0,
           maxWebViewHeight: 0,
           showCloseIcon: false,
+          animationTime: 0,
         ),
       ) {
     on<_ChangeSize>(_onChangeSize);
@@ -32,8 +33,17 @@ class ModalWindowBloc extends Bloc<ModalWindowEvent, ModalWindowState> {
   static const _dragBarHeighScreenPercent = 0.1;
   static const _webViewHeighScreenPercent = 1;
   static const minHeight = 0.10;
+  // in Miliseconds
+  static const minAnimationTime = 100;
+  // in Miliseconds
+  static const maxAnimationTime = 500;
   final _webViewCenterHeightScreenPercent =
       (_webViewHeighScreenPercent - _dragBarHeighScreenPercent) / 2;
+
+  int animationTimeValue(double newHeight) => (newHeight - state.height)
+      .abs()
+      .toInt()
+      .clamp(minAnimationTime, maxAnimationTime);
 
   void _init() {
     try {
@@ -75,14 +85,16 @@ class ModalWindowBloc extends Bloc<ModalWindowEvent, ModalWindowState> {
   ) {
     final screenHeight = event.screenHeight - event.topPadding;
     final dragBarHeight = screenHeight * _dragBarHeighScreenPercent;
+    final height = screenHeight * _webViewCenterHeightScreenPercent;
     emit(
       _ModalWindowState(
         screenHeight: screenHeight,
-        height: screenHeight * _webViewCenterHeightScreenPercent,
+        height: height,
         dragBarHeight: dragBarHeight,
         maxWebViewHeight:
             (screenHeight * _webViewHeighScreenPercent) - dragBarHeight,
         showCloseIcon: false,
+        animationTime: animationTimeValue(height),
       ),
     );
   }
@@ -95,7 +107,9 @@ class ModalWindowBloc extends Bloc<ModalWindowEvent, ModalWindowState> {
         // WebView has bug with 0 when change size from min to other because set
         // 0.1
         if (newHeight > minHeight && newHeight < state.maxWebViewHeight) {
-          emit(state.copyWith(height: newHeight));
+          emit(
+            state.copyWith(height: newHeight, animationTime: minAnimationTime),
+          );
         }
       }
     }
@@ -128,12 +142,19 @@ class ModalWindowBloc extends Bloc<ModalWindowEvent, ModalWindowState> {
         state.copyWith(
           height: targetHeight,
           showCloseIcon: targetHeight == minHeight,
+          animationTime: animationTimeValue(targetHeight),
         ),
       );
     }
   }
 
   void _onHide(_Hide event, Emitter<ModalWindowState> emit) {
-    emit(state.copyWith(height: minHeight, showCloseIcon: true));
+    emit(
+      state.copyWith(
+        height: minHeight,
+        showCloseIcon: true,
+        animationTime: animationTimeValue(minHeight),
+      ),
+    );
   }
 }

@@ -116,13 +116,18 @@ class ModalWindowWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              BlocSelector<ModalWindowBloc, ModalWindowState, double>(
-                selector: (state) => state.height,
-                builder: (context, height) => Flexible(
+              BlocSelector<
+                ModalWindowBloc,
+                ModalWindowState,
+                ({double height, int animationTime})
+              >(
+                selector: (state) =>
+                    (height: state.height, animationTime: state.animationTime),
+                builder: (context, state) => Flexible(
                   child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 100),
+                    duration: Duration(milliseconds: state.animationTime),
                     curve: Curves.easeOut,
-                    height: height,
+                    height: state.height,
                     child: webView,
                   ),
                 ),
