@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show SystemChannels;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pro_genius_test_task/l10n/l10n.dart';
@@ -13,7 +12,14 @@ class ModalWindowWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     // it not rebuild this widget with change heigh
     // it no need and improve performence
-    final webView = ModalWindowContentWidget(url: url);
+    final webView = BlocBuilder<KeyboardStateCubit, KeyboardState>(
+      builder: (context, state) => ModalWindowContentWidget(
+        url: url,
+        closeKeyboard: state.needClose,
+        closeKeyboardEvent: () =>
+            context.read<KeyboardStateCubit>().keyboardClosed(),
+      ),
+    );
     return BlocConsumer<ModalWindowBloc, ModalWindowState>(
       listener: (context, state) {
         if (state.screenHeight == 0) {
@@ -55,8 +61,7 @@ class ModalWindowWidget extends StatelessWidget {
                     .read<ModalWindowBloc>()
                     .add(ModalWindowEvent.changeSize(details.delta.dy)),
                 onVerticalDragStart: (_) =>
-                    // hide keyboard for WebView
-                    SystemChannels.textInput.invokeMethod('TextInput.hide'),
+                    context.read<KeyboardStateCubit>().closeKeyboard(),
                 onVerticalDragEnd: (_) => context.read<ModalWindowBloc>().add(
                   const ModalWindowEvent.setHeighState(),
                 ),
@@ -79,10 +84,9 @@ class ModalWindowWidget extends StatelessWidget {
                               padding: const EdgeInsets.only(right: 16),
                               child: IconButton(
                                 onPressed: () {
-                                  // hide keyboard for WebView
-                                  SystemChannels.textInput.invokeMethod(
-                                    'TextInput.hide',
-                                  );
+                                  context
+                                      .read<KeyboardStateCubit>()
+                                      .closeKeyboard();
                                   final bloc = context.read<ModalWindowBloc>();
                                   if (bloc.state.showCloseIcon) {
                                     if (context.canPop()) {
